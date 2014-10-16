@@ -16,7 +16,7 @@ import itertools
 
 from gensim.utils import to_unicode
 from gensim.corpora import (bleicorpus, mmcorpus, lowcorpus, svmlightcorpus,
-                            ucicorpus, malletcorpus, textcorpus)
+                            ucicorpus, malletcorpus, textcorpus, indexedcorpus)
 
 # needed because sample data files are located in the same folder
 module_path = os.path.dirname(__file__)
@@ -121,6 +121,19 @@ class CorpusTestCase(unittest.TestCase):
             firstdoc2 = next(iter(corpus))
             testdoc2 = set((to_unicode(corpus.id2word[x]), y) for x, y in firstdoc2)
             self.assertEqual(testdoc2, set([('computer', 1), ('human', 1), ('interface', 1)]))
+
+    def test_indexing(self):
+        fname = datapath('testcorpus.' + self.file_extension.lstrip('.'))
+        corpus = self.corpus_class(fname)
+        docs = list(corpus)
+
+        for idx, doc in enumerate(docs):
+            self.assertEqual(doc, corpus[idx])
+
+        self.assertEqual(docs, corpus[:])
+        self.assertEqual(docs[0:-1], corpus[0:-1])
+        self.assertEqual(docs[2:4], corpus[2:4])
+        self.assertEqual(docs[::2], corpus[::2])
 
 
 # endclass CorpusTestCase
@@ -228,6 +241,9 @@ class TestTextCorpus(CorpusTestCase):
         pass
 
     def test_serialize_compressed(self):
+        pass
+
+    def test_indexing(self):
         pass
 
 # endclass TestTextCorpus
